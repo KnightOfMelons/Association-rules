@@ -4,6 +4,19 @@ from efficient_apriori import apriori as eff_apriori
 # Пришлось пойти на данное ухищрение, чтобы кириллица правильно отображалась.
 sys.stdout.reconfigure(encoding='utf-8')
 
+
+def data_generator(filename):
+    """
+    Data generator
+    """
+    def data_gen():
+        with open(filename) as file:
+            for line in file:
+                yield tuple(k.strip() for k in line.split(','))
+
+    return data_gen
+
+
 # Заранее положил все значения из дз по своему варианту сюда, чтобы не использовать
 # по тысяче раз.
 transactions = [
@@ -29,6 +42,7 @@ transactions = [
             ['Фломастер','Перо','Скетчбук','Корректор']
         ]
 
+
 while True:
     choose = int(input("\n1 - Apriori алгоритм.\n2 - Efficient-Aprioti алгоритм.\nВаш выбор: "))
 
@@ -44,13 +58,26 @@ while True:
     elif choose == 2:
         freqItemSet, rules = eff_apriori(transactions, min_support=0.5, min_confidence=0.5)
 
-        choose_second = int(input("1 - Вывод информации как обычно.\n2 - Вывод информации с помощью lambda\nВаш выбор: "))
+        choose_second = int(input("\n1 - Вывод информации как обычно.\n2 - Вывод информации с помощью lambda\n3 - Запуск чтения из файла тех же значений.\nВаш выбор: "))
+        
+        # Вывод как обычно
         if choose_second == 1:
             for rule in rules:
                 print(rule)
+
+        # Вывод по lambda функции
         elif choose_second == 2:
             rules_rhs = filter(lambda rule: len(rule.lhs) == 1 and len(rule.rhs) == 1, rules)
             for rule in sorted(rules_rhs, key=lambda rule: rule.confidence):
                 print(rule)
+
+        # Вывод из .csv файла
+        elif choose_second == 3:
+            data_transactions_file_CSV = data_generator('my_dataset.csv')()  
+            freqItemSet, rules = eff_apriori(data_transactions_file_CSV, min_support=0.6, min_confidence=0.6)
+            
+            for rule in rules:
+                print(rule)
+
     else:
         continue

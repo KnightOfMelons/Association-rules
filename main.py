@@ -1,4 +1,7 @@
+import sys
 from apriori_python import apriori
+sys.stdout.reconfigure(encoding='utf-8')
+
 
 itemSetList = [
     ['Корректор','Фломастер','Скетчбук','Тубус','Гуашь','Ватман','Перо','Мальберт'],

@@ -44,7 +44,13 @@ while True:
     elif choose == 2:
         freqItemSet, rules = eff_apriori(transactions, min_support=0.5, min_confidence=0.5)
 
-        for rule in rules:
-            print(rule)
+        choose_second = int(input("1 - Вывод информации как обычно.\n2 - Вывод информации с помощью lambda\nВаш выбор: "))
+        if choose_second == 1:
+            for rule in rules:
+                print(rule)
+        elif choose_second == 2:
+            rules_rhs = filter(lambda rule: len(rule.lhs) == 1 and len(rule.rhs) == 1, rules)
+            for rule in sorted(rules_rhs, key=lambda rule: rule.confidence):
+                print(rule)
     else:
         continue

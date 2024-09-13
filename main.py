@@ -1,6 +1,7 @@
 import sys
 from apriori_python import apriori
 from efficient_apriori import apriori as eff_apriori
+from fpgrowth_py import fpgrowth
 # Пришлось пойти на данное ухищрение, чтобы кириллица правильно отображалась.
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -44,7 +45,7 @@ transactions = [
 
 
 while True:
-    choose = int(input("\n1 - Apriori алгоритм.\n2 - Efficient-Aprioti алгоритм.\nВаш выбор: "))
+    choose = int(input("\n1 - Алгоритм Apriori.\n2 - Efficient-Aprioti алгоритм.\n3 - Алгоритм FPGrowth\n0 - Выход.\nВаш выбор: "))
 
     # Реализация алгоритма Apriori по данным из Excel, Вариант 6.
     if choose ==  1:
@@ -58,7 +59,7 @@ while True:
     elif choose == 2:
         freqItemSet, rules = eff_apriori(transactions, min_support=0.5, min_confidence=0.5)
 
-        choose_second = int(input("\n1 - Вывод информации как обычно.\n2 - Вывод информации с помощью lambda\n3 - Запуск чтения из файла тех же значений.\nВаш выбор: "))
+        choose_second = int(input("\n1 - Вывод информации как обычно.\n2 - Вывод информации с помощью lambda\n3 - Запуск чтения из файла тех же значений.\n4 - Вывод частых предметных наборов + инф-ции о количестве встреч.\nВаш выбор: "))
         
         # Вывод как обычно
         if choose_second == 1:
@@ -79,5 +80,25 @@ while True:
             for rule in rules:
                 print(rule)
 
+        # Вывод соответствующих частых предметных наборов, а заодно информации о то, сколько
+        # раз они встретились и в каких транзакциях.
+        elif choose_second == 4:
+            freqItemSet, rules = eff_apriori(transactions, output_transaction_ids=True)
+            
+            for rule in rules:
+                print(rule)
+
+    # Реализация алгоритма FPGrowth по данным из Excel.                
+    elif choose == 3:
+        freqItemSet, rules = fpgrowth(transactions, minSupRatio=0.5, minConf=0.5)
+        
+        for rule in rules:
+                print(rule)
+
+    # Выход из программы.
+    elif choose == 0:
+        break
+
+    # Если пользователь написал неверное значение (то, которое отличается от имеющихся вариантов), то он заново предложит ввести вариант ответа.
     else:
         continue

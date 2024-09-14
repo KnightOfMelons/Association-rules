@@ -8,6 +8,8 @@ pip install fpgrowth-py
 
 pip install pandas
 
+pip install matplotlib
+
 Можно ещё скачать:
 
 pip install pyarmviz

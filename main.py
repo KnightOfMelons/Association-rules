@@ -1,4 +1,5 @@
 import sys
+import matplotlib.pyplot as plt
 # Необходимо для измерения времени работы алгоритмов и всяческих выводов по ним.
 import time
 from apriori_python import apriori
@@ -111,7 +112,7 @@ while True:
 
     # Работа с данными из репозитория, у меня Вариант 2. https://github.com/viktree/curly-octo-chainsaw/blob/master/BreadBasket_DMS.csv
     elif beginning_choose == 2:
-        choose = int(input("\n1 - Алгоритм Apriori для репозитория.\n2 - Efficient-Aprioti алгоритм для репозитория.\n3 - Алгоритм FPGrowth для репозитория.\n0 - Выход.\nВаш выбор: "))
+        choose = int(input("\n1 - Алгоритм Apriori для репозитория.\n2 - Efficient-Aprioti алгоритм для репозитория.\n3 - Алгоритм FPGrowth для репозитория.\n4 - Сравнить все алгоритмы.\n0 - Выход.\nВаш выбор: "))
         
         # Беру как раз-таки те значения, которые я сделал с помощью parser_script.py из BreadBasket_DMS.py
         from BreadBasket_DMS import transactions_from_github
@@ -134,6 +135,7 @@ while True:
 
             print(f"\nАлгоритм выполнен за {end_time_algo - start_time_algo:.4f} секунд, вывод занял {end_time_output - start_time_output:.4f} секунд.")
 
+        # Алгоритм efficient_apriori.
         elif choose == 2:
             # Замеряем время начала
             start_time_algo = time.time()
@@ -150,6 +152,7 @@ while True:
 
             print(f"\nАлгоритм выполнен за {end_time_algo - start_time_algo:.4f} секунд, вывод занял {end_time_output - start_time_output:.4f} секунд.")
 
+        # Алгоритм fpgrowth.
         elif choose == 3:
             # Замеряем время начала
             start_time_algo = time.time()
@@ -165,6 +168,47 @@ while True:
             end_time_output = time.time()
 
             print(f"\nАлгоритм выполнен за {end_time_algo - start_time_algo:.4f} секунд, вывод занял {end_time_output - start_time_output:.4f} секунд.")
+
+        # Сравнение времени выполнения алгоритмов.
+        elif choose == 4:
+            # Словари для хранения времени выполнения алгоритмов
+            times = {
+                'Apriori': {'algo': 0, 'output': 0},
+                'Efficient-Apriori': {'algo': 0, 'output': 0},
+                'FPGrowth': {'algo': 0, 'output': 0}
+            }
+
+            # Замер времени выполнения Apriori
+            start_time_algo = time.time()
+            freqItemSet_apriori, rules_apriori = apriori(transactions_from_github, minSup=0.06, minConf=0.06)
+            end_time_algo = time.time()
+            times['Apriori'] = end_time_algo - start_time_algo
+
+            # Замер времени выполнения Efficient-Apriori
+            start_time_algo = time.time()
+            freqItemSet_eff_apriori, rules_eff_apriori = eff_apriori(transactions_from_github, min_support=0.06, min_confidence=0.06)
+            end_time_algo = time.time()
+            times['Efficient-Apriori'] = end_time_algo - start_time_algo       
+
+            # Замер времени выполнения FPGrowth
+            start_time_algo = time.time()
+            freqItemSet_fpgrowth, rules_fpgrowth = fpgrowth(transactions_from_github, minSupRatio=0.06, minConf=0.06)
+            end_time_algo = time.time()
+            times['FPGrowth'] = end_time_algo - start_time_algo
+
+
+            # Построение графика
+            labels = ['Apriori', 'Efficient-Apriori', 'FPGrowth']
+            algo_times = [times['Apriori'], times['Efficient-Apriori'], times['FPGrowth']]
+
+            x = range(len(labels))
+            plt.figure(figsize=(10, 5))
+            plt.bar(x, algo_times, width=0.6, color='b', align='center')
+            plt.xlabel('Алгоритмы.')
+            plt.ylabel('Время (в секундах).')
+            plt.title('Сравнение времени выполнения алгоритмов.')
+            plt.xticks(x, labels)
+            plt.show()     
 
         # Выход из программы.
         elif choose == 0:
